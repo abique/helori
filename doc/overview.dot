@@ -1,0 +1,18 @@
+digraph Overview {
+  Pool -> ThirdParties;
+  Pool -> Dev;
+  Pool -> Test;
+  Pool -> Prod;
+
+  Http -> AuthService;
+
+  Http -> Pool;
+
+  Upload -> Http;
+  API -> Http;
+  RepoSync -> Http;
+
+  CLI -> API;
+
+  WebInterface -> API;
+}
