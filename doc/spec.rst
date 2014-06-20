@@ -6,6 +6,9 @@ Helori
 Archlinux repositories hosting and management
 ---------------------------------------------
 
+.. contents:: Table of contents
+   :depth: 2
+
 Goal
 ====
 
@@ -25,6 +28,13 @@ We want to easily:
  - keep every version of every packages
  - easy to rollback
  - compare packages and versions in dev, test and prod
+
+Non-Goals
+=========
+
+ - high scalability: this service is not mean to be used by a lot of people,
+   or even host a LOT of packages
+ - efficiency, there is no need to trade simplicity over efficiency
 
 Features
 ========
@@ -55,6 +65,10 @@ Features
    * compare repository content
    * basic operations on repo (add, remove package)
 
+ - notifications hooks
+
+   * execute shell scripts hooks on events
+
 Overview
 ========
 
@@ -82,7 +96,7 @@ The authentication is done through HTTP headers:
 Package upload
 ~~~~~~~~~~~~~~
 
-::
+Request::
 
   PUT /pool/wine-stable-1.6.3-1.tar.pkg.x86_64.pkg.tar.xz HTTP/1.0
   X-Helori-User: abique
@@ -92,18 +106,79 @@ Package upload
 List pool packages
 ~~~~~~~~~~~~~~~~~~
 
-::
+Request::
+
    GET /api/pool
 
-::
-   [{
-     "package": "wine-stable",
-     "version": "1.6.3",
-     "pkgver": "1"
-   }, ...]
+Response::
 
-Interfaces list
-~~~~~~~~~~~~~~~
+   [...,"wine-stable-1.6.2-1","wine-stable-1.6.3-1","wine-stable-1.6.3-2",...]
+
+Search pool by prefix
+~~~~~~~~~~~~~~~~~~~~~
+
+Request::
+
+   GET /api/pool/prefix/wine-stable
+
+Response::
+
+   ["wine-stable-1.6.2-1","wine-stable-1.6.3-1","wine-stable-1.6.3-2"]
+
+List repository packages
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Request::
+
+   GET /api/repos/:repo_name
+
+Response::
+
+   [...,"wine-stable-1.6.2-1","wine-stable-1.6.3-1","wine-stable-1.6.3-2",...]
+
+Search repository
+~~~~~~~~~~~~~~~~~
+
+Request::
+
+   GET /api/pool/prefix/wine-stable
+
+Response::
+
+   ["wine-stable-1.6.2-1","wine-stable-1.6.3-1","wine-stable-1.6.3-2"]
+
+Add package to a repository
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Request::
+
+  PUT /api/repo/:repo_name/pkgs/:package
+  Content-Lenght: 0
+
+Remove package from a repository
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Request::
+
+  DELETE /api/repo/:repo_name/pkgs/:package
 
 Configuration
 =============
+
+Indexing
+========
+
+Pool
+~~~~
+
+Packages are going to be indexed in memory for the pool. This avoid maintaining database on the disk, and at start a directory scan should be fast enough.
+
+We need:
+  * direct access to a package
+  * list every versions available of a package
+  * list packages by prefix
+
+Repositories
+~~~~~~~~~~~~
+
+We rely on libalpm for the various queries.

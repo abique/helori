@@ -1,10 +1,10 @@
-all: spec.html overview.svg
+all: spec.html overview.svg pool-structure.svg
 
-spec.html: spec.rst
+%.html: %.rst
 	rst2html $< >$@
 
-overview.svg: overview.dot
+%.svg: %.dot
 	dot -T svg -o $@ $<
 
 clean:
-	rm -f spec.html overview.svg
+	rm -f spec.html overview.svg pool-structure.svg

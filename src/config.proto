@@ -1,0 +1,7 @@
+package helori.pb;
+
+message Config
+{
+  required bytes pool  = 1;
+  repeated bytes repos = 2;
+}

@@ -10,9 +10,11 @@ digraph Overview {
 
   Upload -> Http;
   API -> Http;
-  RepoSync -> Http;
+  LxcRepoSync -> Http;
 
   CLI -> API;
+  CLI -> Upload;
 
   WebInterface -> API;
+  WebInterface -> Upload;
 }
